@@ -1,5 +1,6 @@
 import java.util.function.DoubleUnaryOperator;
 import groovy.transform.CompileStatic;
+import groovy.transform.TypeChecked;
 
 class Integrate {
 
@@ -45,6 +46,7 @@ class Integrate {
         return total;
     }
 
+    @CompileStatic
     public RunnableState fastRun(final DoubleUnaryOperator function) {
         Integrate THIS = this;
         
@@ -59,6 +61,35 @@ class Integrate {
 
     @CompileStatic
     public double fast(final DoubleUnaryOperator function) {
+        double d = delta;
+        int count = 0;
+        double total = 0.0d;
+        double xValue = lower;
+        
+        while(count < steps) {
+            total += (d * function.applyAsDouble(xValue));
+            ++count;
+            xValue += d;
+        }
+
+        return total;
+    }
+
+    @TypeChecked
+    public RunnableState typeCheckedRun(final DoubleUnaryOperator function) {
+        Integrate THIS = this;
+        
+        return new RunnableState() {
+            double _state;
+            public Object getState() { _state; }
+            public void run() {
+                _state = THIS.typeChecked(function);
+            }
+        }
+    }
+
+    @TypeChecked
+    public double typeChecked(final DoubleUnaryOperator function) {
         double d = delta;
         int count = 0;
         double total = 0.0d;

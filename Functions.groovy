@@ -1,5 +1,6 @@
 import java.util.function.DoubleUnaryOperator;
 import groovy.transform.CompileStatic;
+import groovy.transform.TypeChecked;
 
 class Functions {
 
@@ -23,6 +24,14 @@ class Functions {
         }
     }
 
-    public static One slowOne = new SlowOne();
-    public static One fastOne = new FastOne();
+    @TypeChecked
+    final static class TypeCheckedOne extends One {
+        public double applyAsDouble(double x) {
+            return Math.pow(x, 2);
+        }
+    }
+
+    public static final One slowOne = new SlowOne();
+    public static final One fastOne = new FastOne();
+    public static final One typeCheckedOne = new TypeCheckedOne();
 }

@@ -1,0 +1,93 @@
+* 2 Fast 2 Furious [0/4]
+
+  - [ ] Objection #1: Why should I care about this stuff? Computers just get faster!
+
+    - The free lunch is over. Free speedups come from increasing clock speeds, optimizing execution inside the CPU, and increasing the size of the CPU cache. Only CPU caches are getting bigger.
+
+    - When was the last time you bought a computer that was faster than the one you last bought?
+      
+  - [ ] Objection #2: Isn't this just a matter of choosing the right algorithm?
+
+    - Algorithm complexity does determine execution speed to a large degree
+
+    - However, algorithm complexity always ignores constant factors
+
+    - Those constant factors can be really high
+
+    - A lot of this talk is about reducing those constant factors
+
+  - [ ] Objection #3: Won't the JVM optimize this stuff for me?
+
+    - The JVM will optimize a lot of stuff, but it can't work miracles
+
+    - A lot of this talk is about getting groovy out of the way of the JVM so it can optimize
+
+    - A lot of the rest of this talk is about using groovy to help the JVM do its job
+
+  - [ ] Objection #4: My application doesn't need to go faster!
+
+    - If this is the case then by all means ignore everything in this talk, move on to your next task
+
+    - But, a lot of applications that are "fast enough" really are not. "Fast enough" is often a lie we tell ourselves because we don't know how to solve the problem.
+
+    - Faster often opens up new use cases for your code. Everyone hated source code control before git. Now git is used by everyone and it has changed how we as programmers work. A lot of this has to do with how fast git is. The concepts of merging and branching were well understoof before git, but people avoided them because they were slow. Now everyone branches and merges several times a day, mostly because git is fast.
+
+* Groovy Annotations for Speed [0/7]
+
+  - [ ] @CompileStatic
+
+    - If there is a single thing you remember from this talk it should be use @CompileStatic as a first step when you have an application performance problem.
+
+    - This annotation removes a lot of the dynamicity of Groovy. Properties and methods must be resolvable at compile time, no use of propertyMissing/methodMissing. Types must match. Groovy extension methods such as find/findAll/each are legal. Groovy style casting is legal. Groovy code with @CompileStatic enabled looks a lot like Kotlin code. 
+
+  - [ ] @TypeChecked
+
+    - Does all of the type checking @CompileStatic does and the same rules apply.
+
+    - However it doesn't do static compilation, just the type checking part, so @TypeCheck'ed code won't actually run any faster than normal Groovy code. So why did I include this?
+
+    - @TypeChecked does prevent dispatch based on propertyMissing/methodMissing which is extraordinarily slow.
+
+  - [ ] @Lazy
+
+    - Only initializes a property if it is called; it's a simple one item cache.
+
+    - With volatile it correctly implements double checked locking, which most people don't get right.
+
+    - Very useful for objects which have expensive calls which are not always needed. I've used this extensively for templates with conditional logic. The conditional logic means that some properties are not needed and should not be computed.
+
+  - [ ] @Memoized
+
+    - Caches invocations of your method by adding a hidden map to your class
+
+    - If you have not invoked your method with a particular set of parameters, the logic of your method is called, the parameters are added as keys of the hidden map, and the returned value is added as the value of those keys
+
+    - If you have invoked your method with a particular set of parameters, the parameters are used as the key to look up the correct return value in the cache
+
+    - Is a simple, somewhat tunable cache. For simple use cases it gets the job done
+
+  - [ ] @Immutable
+
+    - Doesn't make your code faster by itself, but does allow you to do fast things with your class
+
+    - @Immutable classes are inherently thread safe, multi-threading can substantially improve performance
+
+    - @Immutable classes also have correct equals() and hashCode() methods. This means they can be used as keys in maps or added to sets. This means that you can eliminate linear search algorithms O(n) with hash based O(1) algorithms 
+
+  - [ ] @Sortable
+
+    - Again, it doesn't make your code faster by itself, by does allow you to do fast things with your class
+
+    - @Sortable code is usable in SortedSet, meaning O(n/2) searches become O(ln n) searches
+
+    - @Sortable code is usable in NavigableSet, meaning range searches are now cheap and easy
+
+  - [ ] @TailRecursive
+
+    - Specialized, if you don't know what tail recursion is, ignore this for now.
+
+    - If your method is most naturally expressed as a recursion, use this to convert the method to iteration
+
+
+
+#+STARTUP: indent

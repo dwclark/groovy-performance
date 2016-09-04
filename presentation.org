@@ -1,4 +1,4 @@
-* 2 Fast 2 Furious [0/4]
+* 2 Fast 2 Furious [0/5]
 
   - [ ] Objection #1: Why should I care about this stuff? Computers just get faster!
 
@@ -32,7 +32,25 @@
 
     - Faster often opens up new use cases for your code. Everyone hated source code control before git. Now git is used by everyone and it has changed how we as programmers work. A lot of this has to do with how fast git is. The concepts of merging and branching were well understoof before git, but people avoided them because they were slow. Now everyone branches and merges several times a day, mostly because git is fast.
 
-* Groovy Annotations for Speed [0/7]
+  - [ ] Objection #5: Groovy is just inherently slow, don't bother.
+
+    - Claim: If you give me a java project I can make it at least as fast or faster by adding Groovy. In some sense this is an empty claim, I can give you back the project as is and it's just as fast as it was. However, I do think that adding Groovy can increase both clarity and speed.
+
+    - Most of what I have done over the past 3 years is write performance critical code, and I always reach for Groovy.
+
+* Assumptions [/]
+
+- [ ] You actually have a performance problem
+
+- [ ] You know how to measure application performance and how to measure improvements
+
+- [ ] You know the basics of algorithm complexity (O(n) notation)
+
+- [ ] You know the basics of how the JVM operates and what makes for fast executing code
+
+- [ ] If you don't know these things no worries, you will still hopefully get a lot out of this talk, just be careful about applying these techniques. In other words, don't run out and add @CompileStatic to all of your code. Depending on your application it may not actually go any faster and may make your code worse.
+
+* Groovy Annotations for Speed [0/8]
 
   - [ ] @CompileStatic
 
@@ -88,6 +106,40 @@
 
     - If your method is most naturally expressed as a recursion, use this to convert the method to iteration
 
+  - [ ] @Slf4j and friends in groovy.util.logging
 
+    - Lots of logging can lead to performance degradation if the logging is done incorrectly
+
+    - Parametrized logging is NOT a valid solution IMNSHO. It doesn't work in all cases and can lead to unnecessary array creation
+
+    - The only way to log correctly is to use log guard statements consistently, like: if(log.isDebugEnabled()) { log.debug(...) }, this is of course a lot of typing, easy to forget, and just plain ugly
+
+    - The Groovy logging annotations give you that for free, they do the right thing every time.
+
+* What makes these annotations work and can I do the same thing [0/2]
+
+- [ ] The secret is code injection, re-arranging, and re-writing your code
+
+  - @Lazy, @Memoized, and @Slf4j wrap code around your code. The semantics are the same, the JVM will just execute it more efficiently
+
+  - @Sortable and @Immutable add code to your code to enforce semantics of immutability and comparability
+
+  - @TailRecursive re-writes your code to be iterative instead of recursive
+
+  - @CompileStatic generates different byte code than normal groovy code
+
+- [ ] You can absolutely do the same thing
+
+* Let's do what Groovy does! [0/1]
+
+- [ ] Easiest First: Re-arrange code at runtime with builders
+
+  - Dynamic groovy code is usually the easiest and most natural way to express something
+
+  - However, it may not lead to the most efficient execution
+
+  - Solution: combine easy Groovy syntax with uglier execution, using a builder as your bridge between the two
+
+  - See Grades.groovy
 
 #+STARTUP: indent

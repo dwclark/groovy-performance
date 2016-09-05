@@ -8,21 +8,22 @@ class TimeIt {
     static class Info {
         TimeUnit units = NANOSECONDS;
         int ops;
+        long total;
         long start;
-        long end;
 
         public Info(final int ops) {
             this.ops = ops;
             this.start = System.nanoTime();
         }
 
-        public Info stop() {
-            this.end = System.nanoTime();
-            return this;
+        public Info plus(Info info) {
+            return new Info(ops: ops + info.ops,
+                            total: total + info.total);
         }
 
-        public long getTotal() {
-            return end - start;
+        public Info stop() {
+            this.total = System.nanoTime() - start;
+            return this;
         }
 
         public long getSeconds() {
@@ -55,10 +56,6 @@ class TimeIt {
                 ret += ", ${scale(ops / milliSeconds)} ops/ms"
             }
 
-            if(seconds) {
-                ret += ", ${scale(ops / seconds)} ops/sec";
-            }
-            
             return ret;
         }
     }

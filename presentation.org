@@ -130,7 +130,7 @@
 
 - [ ] You can absolutely do the same thing
 
-* Let's do what Groovy does! [0/1]
+* Let's do what Groovy does! [0/2]
 
 - [ ] Easiest First: Re-arrange code at runtime with builders
 
@@ -141,5 +141,13 @@
   - Solution: combine easy Groovy syntax with uglier execution, using a builder as your bridge between the two
 
   - See Grades.groovy
+
+- [ ] Easy to Understand but possibly dangerous: Compile strings
+
+  - Basic idea is that you have a string representation of code and you also have a groovy compiler at all times, make use of both to turn strings into executable code
+
+  - Compiler can be either the GroovyShell or the GroovyClassLoader
+
+  - Can also be used to load/reload and optimize scripts at runtime
 
 #+STARTUP: indent

@@ -24,6 +24,13 @@ class Functions {
         }
     }
 
+    @CompileStatic
+    final static class FastComplex extends One {
+        public double applyAsDouble(double x) {
+            return x * ((x * x) + x + 1.0d);
+        }
+    }
+
     @TypeChecked
     final static class TypeCheckedOne extends One {
         public double applyAsDouble(double x) {
@@ -33,5 +40,6 @@ class Functions {
 
     public static final One slowOne = new SlowOne();
     public static final One fastOne = new FastOne();
+    public static final One fastComplex = new FastComplex();
     public static final One typeCheckedOne = new TypeCheckedOne();
 }

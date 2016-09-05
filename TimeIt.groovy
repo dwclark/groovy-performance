@@ -3,22 +3,28 @@ import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.*;
 
+@CompileStatic
 class TimeIt {
 
     static class Info {
         TimeUnit units = NANOSECONDS;
-        int ops;
+        long ops;
         long total;
         long start;
-
-        public Info(final int ops) {
+        
+        public Info(final long ops) {
             this.ops = ops;
             this.start = System.nanoTime();
         }
 
+        public Info(final long ops, final long total) {
+            this.ops = ops;
+            this.total = total;
+        }
+
         public Info plus(Info info) {
-            return new Info(ops: ops + info.ops,
-                            total: total + info.total);
+            return new Info(ops + info.ops,
+                            total + info.total);
         }
 
         public Info stop() {
@@ -50,48 +56,54 @@ class TimeIt {
         
         @Override
         public String toString() {
-            String ret = "Total Time: ${total} ${displayUnits}, ${scale(ops / total)} ops/${displayUnits}";
-            
-            if(milliSeconds) {
-                ret += ", ${scale(ops / milliSeconds)} ops/ms"
-            }
-
-            return ret;
+            return "Total Time: ${total} ${displayUnits}, ${ops / milliSeconds} ops/ms";
         }
     }
 
-    public static Runnable warmUp(final Integer ops, final RunnableState r) {
-        ops.times { r.run(); }
+    public void iteration(final RunnableState r) {
+        long counter = 0L;
+        while(counter < r.ops) {
+            r.run();
+        }
+    }
+    
+    public TimeIt warmUp(final Integer ops, final RunnableState r) {
+        r.ops = ops;
+        Info info = new Info(ops);
+
+        if(r.doesIteration) {
+            r.run();
+        }
+        else {
+            iteration(r);
+        }
+        
+        info.stop();
         println("Warm Up State: ${r.state}");
-        return r;
+        return this;
     }
 
-    public static Runnable warmUp(final RunnableState r) {
+    public TimeIt warmUp(final RunnableState r) {
         return warmUp(15_000, r);
     }
 
-    @CompileStatic
-    public static Info time(final int warmUpCycles, final int total, final RunnableState r) {
-        warmUp(warmUpCycles, r);
-        int counter = 0;
-        Info info = new Info(total);
-        while(counter < total) {
-            ++counter;
+    public Info time(final long ops, final RunnableState r) {
+        r.ops = ops;
+        Info info = new Info(ops);
+        
+        if(r.doesIteration) {
             r.run();
         }
-
+        else {
+            iteration(r);
+        }
+        
         info.stop();
-        println("State: ${r.state}");
+        println("Type: ${r.getClass()}, State: ${r.state}");
         return info;
     }
-    
-    @CompileStatic
-    public static Info time(final int total, final RunnableState r) {
-        return time(15_000, total, r);
-    }
 
-    @CompileStatic
-    public static Info time(final RunnableState r) {
-        return time(15_000, 100_000, r);
+    public Info time(final RunnableState r) {
+        return time(100_000L, r);
     }
 }

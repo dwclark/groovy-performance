@@ -38,7 +38,7 @@
 
     - Most of what I have done over the past 3 years is write performance critical code, and I always reach for Groovy.
 
-* Assumptions [/]
+* Assumptions [0/5]
 
 - [ ] You actually have a performance problem
 
@@ -50,6 +50,57 @@
 
 - [ ] If you don't know these things no worries, you will still hopefully get a lot out of this talk, just be careful about applying these techniques. In other words, don't run out and add @CompileStatic to all of your code. Depending on your application it may not actually go any faster and may make your code worse.
 
+* Groovy Gotchas [0/6]
+
+- [ ] Much fewer than there used to be. For the most part compiled static Groovy code is about as performant as Java code.
+
+  - Java 8 is a big win for groovy. Java 8 is very agressive about inlining code.
+
+  - I used to recommend against using arrays directly in Groovy. Once hotspot has optimized a method there is no difference between Groovy and Java array access. This is acutally quite shocking.
+
+  - I used to also have concerns about reference equality in Groovy. I don't remember why, but it also is compiled to the same byte codes as on the JVM.
+
+- [ ] Gotcha #1: Boxing/Unboxing
+
+  - Implicit box/unbox operations can really slow down a hot inner loop.
+
+  - How much of a slow down? I've seen 3x slowdown.
+
+  - However, this isn't really Groovy specific because Java has the same problem.
+
+  - See fastUtils in Groovy class.
+
+- [ ] Gotcha #2: Implcit casting
+
+  - Boxing/unboxing is really just a special case of this.
+
+  - Groovy tends to be much slower about casts because it has to hook into asType().
+
+  - This applies even to primitive casts. Bottom line: avoid casts in hot spots if necessary.
+
+  - Amazingly enough, any type of non-exact match causes this problem. Even assigning to references of a super class, for instance see Groovy.referenceEquals()
+
+- [ ] Gotcha #3: Exception based dispatch
+
+  - propertyMissing/methodMissing is handled through throwing exceptions, avoid this, it is really slow.
+
+  - This can show up in unexpected areas. For example accessing arrays outside of their bounds works in Groovy, but it is handled through catching exceptions and re-trying array access.
+
+- [ ] Gotcha #4: Inner classes
+
+  - Non-static inner classes "work" but are not natural in groovy and lead to surprising behavior. Some of these are lower performance due to accessing methods and properties via reflection, i.e. slow code.
+
+  - Solution: Use static inner classes for speed and encapsulation or use closures.
+
+- [ ] Gotcha #5: Switch statements
+
+  - Groovy switch statements are SIGNIFICANTLY slower than Java versions. In simple tests. dispatching on integers, Java is 50x faster. Why?
+
+  - Java switches always jump to computed offsets. If you can't jump based on an integer Java won't support your type. This is why it took so long to get String based switches. They had to set in stone how Strings compute hash codes so that offsets could be pre-computed based on absolutely known string hash codes.
+
+  - Groovy switches are driven off of the isCase operator. This means a switch statement is just a series of calls to the isCase method. This is really slow.
+
+  - Solution: Use if/else and fast tests for a small number of tests. For large numbers of tests use fast value types and maps.
 * Groovy Annotations for Speed [0/8]
 
   - [ ] @CompileStatic

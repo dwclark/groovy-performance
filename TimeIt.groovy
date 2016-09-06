@@ -64,6 +64,7 @@ class TimeIt {
         long counter = 0L;
         while(counter < r.ops) {
             r.run();
+            ++counter;
         }
     }
     

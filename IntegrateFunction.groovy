@@ -10,7 +10,7 @@ trait IntegralUnaryFunction {
         return Math.abs(end - start) / (double) steps;
     }
 
-    static class Runner implements RunnableState {
+    static class Runner extends RunnableState {
         final IntegralUnaryFunction iuf;
         final int steps;
         final double start;

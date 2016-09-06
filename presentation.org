@@ -50,7 +50,7 @@
 
 - [ ] If you don't know these things no worries, you will still hopefully get a lot out of this talk, just be careful about applying these techniques. In other words, don't run out and add @CompileStatic to all of your code. Depending on your application it may not actually go any faster and may make your code worse.
 
-* Groovy Gotchas [0/6]
+* Groovy Gotchas [0/9]
 
 - [ ] Much fewer than there used to be. For the most part compiled static Groovy code is about as performant as Java code.
 
@@ -80,11 +80,13 @@
 
   - Amazingly enough, any type of non-exact match causes this problem. Even assigning to references of a super class, for instance see Groovy.referenceEquals()
 
-- [ ] Gotcha #3: Exception based dispatch
+- [ ] Gotcha #3: Meta Class based dispatch
 
-  - propertyMissing/methodMissing is handled through throwing exceptions, avoid this, it is really slow.
+  - propertyMissing/methodMissing/invokeMethod are just plain slow. You also can't use them with @CompileStatic or @TypeChecked
 
-  - This can show up in unexpected areas. For example accessing arrays outside of their bounds works in Groovy, but it is handled through catching exceptions and re-trying array access.
+  - This also shows up in builders that tend to be implemented through propertyMissing/methodMissing/invokeMethod. However this is usually a case of it not mattering. 99% of the time time after I use a builder I save a the data to disk or send it out of a socket. I/O is orders of magnitude slower than in VM processing and will usually swamp the execution time of the builder.
+
+  - Grails and Gradle have both moved away from these implementation techniques to increase performance
 
 - [ ] Gotcha #4: Inner classes
 
@@ -101,6 +103,29 @@
   - Groovy switches are driven off of the isCase operator. This means a switch statement is just a series of calls to the isCase method. This is really slow.
 
   - Solution: Use if/else and fast tests for a small number of tests. For large numbers of tests use fast value types and maps.
+
+- [ ] Gotcha #6: Using ==
+
+  - Calling '==' is very slow, but oddly enough calling equals() is very fast. Huh?
+
+  - Calling '==' results in a call to ScriptBytecodeAdapter.compareEqual() which appears to be the culprit in making things fast.
+
+  - This appears to be a change from a few years ago. If I remember correctly calling equals() explicitly used to result in a call to ScriptBytecodeAdapter.compareEqual(), even in @CompileStatic mode. At least now there is this escape hatch if needed, though I probably won't remember to use it.
+
+  - The actual implementation in Groovy of equals() is quite performant, meaning Groovy classes will be performant in collection types.
+
+- [ ] Gotcha #7: Using out of bounds indexes for arrays/lists
+
+  - This is implemented by catching ArrayIndexOutOfBoundsException, then re-trying with a re-mapped index.
+
+  - I didn't measure this but it just looks slow. In fact I don't see how could it be anything but slower than normal array/list access.
+
+- [ ] Audience participation
+
+  - What have you seen?
+
+  - Acutal measured slowness is preferred to vague intuitions, which are often wrong in dealing with code.
+
 * Groovy Annotations for Speed [0/8]
 
   - [ ] @CompileStatic

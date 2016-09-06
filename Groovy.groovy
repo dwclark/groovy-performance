@@ -165,19 +165,6 @@ public class Groovy {
             return (one == toCmp.one && two == toCmp.two);
         }
 
-        public boolean untypedEquals(final Object rhs) {
-            if(!(rhs instanceof Pair)) {
-                return false;
-            }
-            else {
-                return typedEquals((Pair) rhs);
-            }
-        }
-
-        public boolean typedEquals(final Pair rhs) {
-            return (one == rhs.one && two == rhs.two);
-        }
-
         @Override
         public int hashCode() {
             return one + two;
@@ -207,7 +194,10 @@ public class Groovy {
             for(int i = 0; i < times; ++i) {
                 mutable.one = i;
                 mutable.two = i + 1;
-                result = mutable.equals(pairs[i % mod]);
+                //fast version
+                //result = mutable.equals(pairs[i % mod]);
+                //slow version:
+                result = mutable == pairs[i % mod];
             }
 
             state = result;

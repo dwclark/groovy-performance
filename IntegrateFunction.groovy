@@ -85,37 +85,3 @@ class FastRectangular implements IntegralUnaryFunction {
         return total;
     }
 }
-
-@CompileStatic
-class CompiledRectangular {
-    static final String variable = 'tR0nhGaGDcoG3kTK5';
-    static final AtomicInteger counter = new AtomicInteger();
-    
-    //expectes GStrings that look like this: "${x} * ${x}"
-    static IntegralUnaryFunction compile(final GString gstr) {
-        String toSub = gstr.strings.join(variable);
-        GroovyClassLoader gcl = CompiledRectangular.classLoader as GroovyClassLoader;
-        String function = """
-@groovy.transform.CompileStatic
-class CR_${counter.andIncrement} implements IntegralUnaryFunction {
-
-     double integrate(final int steps, final double start, final double end) {
-         double d = delta(steps, start, end);
-         int count = 0;
-         double total = 0.0d;
-         double ${variable} = start;
-        
-         while(count < steps) {
-             total += (d * (${toSub}));
-             ++count;
-             ${variable} += d;
-         }
-
-         return total;
-    }
-}""";
-
-    println(function);
-    return gcl.parseClass(function).newInstance() as IntegralUnaryFunction;
-    }
-}

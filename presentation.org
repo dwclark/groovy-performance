@@ -50,7 +50,7 @@
 
 - [ ] If you don't know these things no worries, you will still hopefully get a lot out of this talk, just be careful about applying these techniques. In other words, don't run out and add @CompileStatic to all of your code. Depending on your application it may not actually go any faster and may make your code worse.
 
-* Groovy Gotchas [0/9]
+* Groovy Gotchas (Avoid the Bad) [0/9]
 
 - [ ] Much fewer than there used to be. For the most part compiled static Groovy code is about as performant as Java code.
 
@@ -108,7 +108,7 @@
 
   - Calling '==' is very slow, but oddly enough calling equals() is very fast. Huh?
 
-  - Calling '==' results in a call to ScriptBytecodeAdapter.compareEqual() which appears to be the culprit in making things fast.
+  - Calling '==' results in a call to ScriptBytecodeAdapter.compareEqual() which appears to be the culprit in making things slow.
 
   - This appears to be a change from a few years ago. If I remember correctly calling equals() explicitly used to result in a call to ScriptBytecodeAdapter.compareEqual(), even in @CompileStatic mode. At least now there is this escape hatch if needed, though I probably won't remember to use it.
 
@@ -126,7 +126,7 @@
 
   - Acutal measured slowness is preferred to vague intuitions, which are often wrong in dealing with code.
 
-* Groovy Annotations for Speed [0/8]
+* Groovy Annotations for Speed (Use the Good) [0/8]
 
   - [ ] @CompileStatic
 
@@ -206,9 +206,11 @@
 
 - [ ] You can absolutely do the same thing
 
-* Let's do what Groovy does! [0/2]
+* Let's do what Groovy does! (Create the Great) [0/4]
 
-- [ ] Easiest First: Re-arrange code at runtime with builders
+- [ ] Re-arrange code at runtime with builders
+
+  - See Grades.groovy
 
   - Dynamic groovy code is usually the easiest and most natural way to express something
 
@@ -216,14 +218,70 @@
 
   - Solution: combine easy Groovy syntax with uglier execution, using a builder as your bridge between the two
 
-  - See Grades.groovy
+- [ ] Compile using the Groovy Class Loader (GCL)
 
-- [ ] Easy to Understand but possibly dangerous: Compile strings
+  - See Functions.compile
 
   - Basic idea is that you have a string representation of code and you also have a groovy compiler at all times, make use of both to turn strings into executable code
 
-  - Compiler can be either the GroovyShell or the GroovyClassLoader
-
   - Can also be used to load/reload and optimize scripts at runtime
+
+  - Use this version if you need access to actual class produced
+
+- [ ] Compile using the Groovy Shell
+
+  - See Functions.fromScript
+
+  - Similar to GCL trick. Really it's exactly the same thing since they underneath the covers are doing the same thing.
+
+  - Like GCL the basic problem you are trying to solve is that you need to defer optimization to runtime, but you do want to use the static compiler.
+
+  - Safer than GCL since you can use Secure AST transformations to restrict code being run
+
+  - Don't write parsers, write Groovy DSL's, compile them using the Groovy Shell and write your DSL engines to optimize the code that executes.
+
+- [ ] Transform your code using AST Transformations
+
+  - Beyond the scope of this presentation. I have a presentation I have given in the past, check out my github repo on AST transformations.
+
+  - Basic idea: You want to give the Groovy compiler code other than the one you wrote. Maybe you want to pre-compute something or you want the compiler to generate code based on the code you have written (compile time meta-programming).
+
+  - Idea #1: A better caching library than @Memoized.
+
+  - Idea #2: Minimal Perfect Hashing: Guarantee that hashCode() produces collision free hash codes if the set of objects is known at compile time.
+
+  - Idea #3: Binary parsers generated based on config data known at compile time.
+
+* Tools For Diagnosing Groovy Performance Problems [0/4]
+
+- [ ] YourKit https://www.yourkit.com
+
+  - Best JVM profiler out there.
+
+  - Tells you exactly where your code is slow
+
+  - However, it's pricey, but free for open source projects
+
+- [ ] JD-GUI http://jd.benow.ca/
+
+  - Best Java bytecode decompiler out there
+
+  - Tells you what a JVM thinks your code look like
+
+  - Great a looking for extra/slow code the Groovy compiler is injecting. As a generalization, the less comprehensible and the uglier your decompiled code is, the worse it will perform. However, this is not a guarantee and exceptions abound.
+
+- [ ] JIT Watch https://github.com/AdoptOpenJDK/jitwatch
+
+  - Tells you what the JVM is doing to your code at runtime.
+
+  - Is your code being compiled to native code? Is your code getting inlined? What's the runtime call graph of your methods? JIT Watch can answer all of these questions, which are critical in understanding why your code is fast or slow.
+
+- [ ] Java Bytecode Editor http://set.ee/jbe/
+
+  - Valuable for looking at what bytecode is in your class files
+
+  - If you do performance work, you eventually have to start looking at bytecode
+
+
 
 #+STARTUP: indent

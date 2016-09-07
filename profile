@@ -10,8 +10,9 @@ new File('.').eachFile { f ->
     } 
 }
 
-//grab fast util
+//grab fast util and jafama
 groovy.grape.Grape.grab(group: 'it.unimi.dsi', module: 'fastutil', version: '7.0.13')
+groovy.grape.Grape.grab(group: 'net.jafama', module: 'jafama', version: '2.1.0')
 
 :load TimeIt.groovy
 timer = new TimeIt()
@@ -51,7 +52,10 @@ timer.warmUp(javaEquality)
 slowIntegral = new SlowRectangular(Functions.slowOne).runner(1_000, 0.0d, 1.0d);
 fastIntegral = new FastRectangular(Functions.fastOne).runner(1_000, 0.0d, 1.0d);
 fastComplexIntegral = new FastRectangular(Functions.fastComplex).runner(1_000, 0.0d, 1.0d);
+
+//just need a place holder for the variable I am using
 x = 0.0d;
-compiledIntegral = CompiledRectangular.compile("Math.pow(${x}, 2)").runner(1_000, 0.0d, 1.0d);
-compiledComplexIntegral = CompiledRectangular.compile("$x * (($x * $x) + $x + 1.0d)").runner(1_000, 0.0d, 1.0d);
+integrateX2 = new FastRectangular(compile("${x} * ${x}")).runner(1_000, 0.0d, 1.0d)
+integrateSin = new FastRectangular(compile("net.jafama.FastMath.sin(${x})")).runner(1_000, 0.0d, Math.PI);
+integrateX3 = new FastRectangular(fromScript(new File('cubed.groovy'))).runner(1_000, 0.0d, 1.0d)
 

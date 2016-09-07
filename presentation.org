@@ -250,7 +250,9 @@
 
   - Idea #2: Minimal Perfect Hashing: Guarantee that hashCode() produces collision free hash codes if the set of objects is known at compile time.
 
-  - Idea #3: Binary parsers generated based on config data known at compile time.
+  - Idea #3: Binary parsers/encoder generated based on data known at compile time.
+
+  - Idea #4: Go crazy with Cedric, embed java byte code via Groovy AST transforms: https://github.com/melix/groovy-bytecode-ast. I've been wanting to try this myself.
 
 * Tools For Diagnosing Groovy Performance Problems [0/4]
 
@@ -285,3 +287,4 @@
 
 
 #+STARTUP: indent
+#+TITLE: Groovy Performance: Avoid the Bad, Use the Good, Create the Great

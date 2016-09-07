@@ -1,7 +1,7 @@
 * 2 Fast 2 Furious [0/5]
 
   - [ ] Objection #1: Why should I care about this stuff? Computers just get faster!
-
+    
     - The free lunch is over. Free speedups come from increasing clock speeds, optimizing execution inside the CPU, and increasing the size of the CPU cache. Only CPU caches are getting bigger.
 
     - When was the last time you bought a computer that was faster than the one you last bought?
@@ -113,7 +113,7 @@
   - This appears to be a change from a few years ago. If I remember correctly calling equals() explicitly used to result in a call to ScriptBytecodeAdapter.compareEqual(), even in @CompileStatic mode. At least now there is this escape hatch if needed, though I probably won't remember to use it.
 
   - The actual implementation in Groovy of equals() is quite performant, meaning Groovy classes will be performant in collection types.
-
+    
 - [ ] Gotcha #7: Using out of bounds indexes for arrays/lists
 
   - This is implemented by catching ArrayIndexOutOfBoundsException, then re-trying with a re-mapped index.

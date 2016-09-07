@@ -7,7 +7,7 @@
     - When was the last time you bought a computer that was faster than the one you last bought?
       
   - [ ] Objection #2: Isn't this just a matter of choosing the right algorithm?
-
+    
     - Algorithm complexity does determine execution speed to a large degree
 
     - However, algorithm complexity always ignores constant factors
@@ -49,6 +49,30 @@
 - [ ] You know the basics of how the JVM operates and what makes for fast executing code
 
 - [ ] If you don't know these things no worries, you will still hopefully get a lot out of this talk, just be careful about applying these techniques. In other words, don't run out and add @CompileStatic to all of your code. Depending on your application it may not actually go any faster and may make your code worse.
+
+- [ ] However, even if these things don't apply, you should still be able to get a lot out of this talk
+
+* Performance?? [0/3]
+
+- [ ] This is a hard talk to give
+
+  - Performance is a black art
+
+  - Everything has an exception
+
+  - Intuitions are wrong very often
+
+  - Every application is different, very hard to generalize anything
+
+- [ ] We are going to be talking about computation based performance. We want to squeeze as much performance out of the CPU as possible.
+
+- [ ] This assumes you are doing no I/O operations: no sockets, no DB calls, no file operations
+
+  - Performance problems here are usually easier to diagnose and fix
+
+  - Usually it means using threads to parallelize operations and then minimizing thread context switches
+
+  - Alternately, it means using asynchronous I/O will callbacks or promises to parallelize operations
 
 * Groovy Gotchas (Avoid the Bad) [0/9]
 
@@ -254,7 +278,7 @@
 
   - Idea #4: Go crazy with Cedric, embed java byte code via Groovy AST transforms: https://github.com/melix/groovy-bytecode-ast. I've been wanting to try this myself.
 
-* Tools For Diagnosing Groovy Performance Problems [0/4]
+* Tools For Diagnosing Groovy Performance Problems [0/5]
 
 - [ ] YourKit https://www.yourkit.com
 
@@ -263,6 +287,14 @@
   - Tells you exactly where your code is slow
 
   - However, it's pricey, but free for open source projects
+
+- [ ] VisualVM https://visualvm.java.net/
+
+  - If you don't have access to YourKit, this gives basic information about in memory JVM behavior
+
+  - Tells you your code is slow, doesn't help as much in locating where it is slow
+
+  - Generally comes with Oracle JDK's these days. OpenJDK may or may not have it.
 
 - [ ] JD-GUI http://jd.benow.ca/
 
@@ -288,3 +320,34 @@
 
 #+STARTUP: indent
 #+TITLE: Groovy Performance: Avoid the Bad, Use the Good, Create the Great
+* How do I apply this stuff? [0/2]
+
+- [ ] A lot of these tricks remove a lot of the "Groovyness" out of Groovy. Your code can end up looking like mostly Java code.
+
+- [ ] Good application architecture
+
+  - Bottom layer of your application/library should be a performant engine that makes heavy use of @CompileStatic or Java code
+
+    - This layer should be mostly hidden from users of your library
+
+    - If you need to expose pieces of this part to users, only expose interfaces or abstract classes, you need the ability to change the internals without people depending on details. It's also best if what you expose it immutable.
+
+    - Unit test this layer like crazy, if something goes wrong here, it will be a huge problem
+
+  - Middle layer is for business logic and I/O code
+
+    - No need to @CompileStatic, but @TypeChecked code can be useful here
+
+    - I/O is generally an order of magnitude slower than the slowest Groovy code, so don't bother speeding things up
+
+    - Write clean and idiomatic Groovy here
+
+    - This is the layer an application developer should work at
+
+  - Top Layer is for scripting, DSL's, configuration, and more idiomatic Groovy
+
+    - This is the public API for your application, this is what people should think of when they think about your application
+
+    - Use any dynamic tricks your want here, this code gets executed very few times
+
+    - This is where you show how cool Groovy is

@@ -1,4 +1,4 @@
-% Created 2016-09-07 Wed 17:19
+% Created 2016-09-07 Wed 17:26
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -29,8 +29,21 @@
 \maketitle
 \tableofcontents
 
-\section{2 Fast 2 Furious [0/5]}
+\section{Who Am I? [0/4]}
 \label{sec:orgheadline1}
+
+\begin{itemize}
+\item $\square$ David Clark
+
+\item $\square$ GitHub: \url{https://github.com/dwclark}
+
+\item $\square$ Work: Principal Engineer, Research Now \url{https://www.researchnow.com/} (we are hiring, come watch me yell at people, make a fool of myself, but also do some cool Groovy code)
+
+\item $\square$ Project: http-builder-ng, \url{https://github.com/dwclark/http-builder-ng}. Replacement for the aging HTTPBuilder. Modern Groovy DSL for doing anything http related
+\end{itemize}
+
+\section{2 Fast 2 Furious [0/5]}
+\label{sec:orgheadline2}
 
 \begin{itemize}
 \item $\square$ Objection \#1: Why should I care about this stuff? Computers just get faster!
@@ -83,7 +96,7 @@
 \end{itemize}
 
 \section{Assumptions [0/5]}
-\label{sec:orgheadline2}
+\label{sec:orgheadline3}
 
 \begin{itemize}
 \item $\square$ You actually have a performance problem
@@ -100,7 +113,7 @@
 \end{itemize}
 
 \section{Performance?? [0/3]}
-\label{sec:orgheadline3}
+\label{sec:orgheadline4}
 
 \begin{itemize}
 \item $\square$ This is a hard talk to give
@@ -129,7 +142,7 @@
 \end{itemize}
 
 \section{Groovy Gotchas (Avoid the Bad) [0/9]}
-\label{sec:orgheadline4}
+\label{sec:orgheadline5}
 
 \begin{itemize}
 \item $\square$ Much fewer than there used to be. For the most part compiled static Groovy code is about as performant as Java code.
@@ -226,7 +239,7 @@
 \end{itemize}
 
 \section{Groovy Annotations for Speed (Use the Good) [0/8]}
-\label{sec:orgheadline5}
+\label{sec:orgheadline6}
 
 \begin{itemize}
 \item $\square$ @CompileStatic
@@ -311,7 +324,7 @@
 \end{itemize}
 
 \section{What makes these annotations work and can I do the same thing [0/2]}
-\label{sec:orgheadline6}
+\label{sec:orgheadline7}
 
 \begin{itemize}
 \item $\square$ The secret is code injection, re-arranging, and re-writing your code
@@ -330,7 +343,7 @@
 \end{itemize}
 
 \section{Let's do what Groovy does! (Create the Great) [0/4]}
-\label{sec:orgheadline7}
+\label{sec:orgheadline8}
 
 \begin{itemize}
 \item $\square$ Re-arrange code at runtime with builders
@@ -389,7 +402,7 @@
 \end{itemize}
 
 \section{Tools For Diagnosing Groovy Performance Problems [0/5]}
-\label{sec:orgheadline8}
+\label{sec:orgheadline9}
 
 \begin{itemize}
 \item $\square$ YourKit \url{https://www.yourkit.com}
@@ -439,7 +452,7 @@
 \end{itemize}
 \end{itemize}
 \section{How do I apply this stuff? [0/2]}
-\label{sec:orgheadline9}
+\label{sec:orgheadline10}
 
 \begin{itemize}
 \item $\square$ A lot of these tricks remove a lot of the "Groovyness" out of Groovy. Your code can end up looking like mostly Java code.

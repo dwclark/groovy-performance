@@ -1,3 +1,13 @@
+* Who Am I? [0/4]
+
+- [ ] David Clark
+
+- [ ] GitHub: https://github.com/dwclark
+
+- [ ] Work: Principal Engineer, Research Now https://www.researchnow.com/ (we are hiring, come watch me yell at people, make a fool of myself, but also do some cool Groovy code)
+
+- [ ] Project: http-builder-ng, https://github.com/dwclark/http-builder-ng. Replacement for the aging HTTPBuilder. Modern Groovy DSL for doing anything http related
+
 * 2 Fast 2 Furious [0/5]
 
   - [ ] Objection #1: Why should I care about this stuff? Computers just get faster!

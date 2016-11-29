@@ -1,4 +1,5 @@
-import groovy.transform.CompileStatic;
+package perf;
+
 import java.util.concurrent.ConcurrentHashMap;
 import static java.util.concurrent.ThreadLocalRandom.current as tlr;
 
@@ -8,7 +9,7 @@ class PerformanceIssues {
     static final ConcurrentHashMap<Integer,String> map = new ConcurrentHashMap<>();
 
     static String randomText() {
-        int length = tlr().nextInt(1, 100);
+        int length = tlr().nextInt(1, 1000);
         StringBuilder sb = new StringBuilder(length);
         for(int i = 0; i < length; ++i) {
             sb.append(tlr().nextInt(0, 10) as String)
@@ -20,7 +21,7 @@ class PerformanceIssues {
     static void putRandom() {
         Integer key = tlr().nextInt(MAX_KEYS);
         String s = '';
-        while(s.length() < 97) {
+        while(s.length() < 750) {
             s = randomText();
         }
         

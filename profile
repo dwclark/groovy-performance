@@ -50,8 +50,11 @@ timer.warmUp(javaEquality)
 :import static Functions.*
 
 slowIntegral = new SlowRectangular(Functions.slowOne).runner(1_000, 0.0d, 1.0d);
+timer.warmUp(slowIntegral);
 fastIntegral = new FastRectangular(Functions.fastOne).runner(1_000, 0.0d, 1.0d);
+timer.warmUp(fastIntegral);
 fastComplexIntegral = new FastRectangular(Functions.fastComplex).runner(1_000, 0.0d, 1.0d);
+timer.warmUp(fastComplexIntegral);
 
 //just need a place holder for the variable I am using
 x = 0.0d;

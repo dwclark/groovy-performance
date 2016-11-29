@@ -6,7 +6,7 @@
 
 - [ ] Work: Principal Engineer, Research Now https://www.researchnow.com/ (we are hiring, come watch me yell at people, make a fool of myself, but also do some cool Groovy code)
 
-- [ ] Project: http-builder-ng, https://github.com/dwclark/http-builder-ng. Replacement for the aging HTTPBuilder. Modern Groovy DSL for doing anything http related
+- [ ] Project: http-builder-ng, https://github.com/http-builder-ng/http-builder-ng. Replacement for the aging HTTPBuilder. Modern Groovy DSL for doing anything http related
 
 * 2 Fast 2 Furious [0/5]
 
@@ -46,7 +46,7 @@
 
     - Claim: If you give me a java project I can make it at least as fast or faster by adding Groovy. In some sense this is an empty claim, I can give you back the project as is and it's just as fast as it was. However, I do think that adding Groovy can increase both clarity and speed.
 
-    - Most of what I have done over the past 3 years is write performance critical code, and I always reach for Groovy.
+    - Most of what I have done over the past 4 years is write performance critical code, and I always reach for Groovy.
 
 * Assumptions [0/5]
 
@@ -104,7 +104,7 @@
 
   - See fastUtils in Groovy class.
 
-- [ ] Gotcha #2: Implcit casting
+- [ ] Gotcha #2: Implicit casting
 
   - Boxing/unboxing is really just a special case of this.
 
@@ -120,7 +120,7 @@
 
   - This also shows up in builders that tend to be implemented through propertyMissing/methodMissing/invokeMethod. However this is usually a case of it not mattering. 99% of the time time after I use a builder I save a the data to disk or send it out of a socket. I/O is orders of magnitude slower than in VM processing and will usually swamp the execution time of the builder.
 
-  - Grails and Gradle have both moved away from these implementation techniques to increase performance
+  - Grails and Gradle have both moved away/are moving away from these implementation techniques to increase performance
 
 - [ ] Gotcha #4: Inner classes
 
@@ -159,7 +159,7 @@
   - What have you seen?
 
   - Acutal measured slowness is preferred to vague intuitions, which are often wrong in dealing with code.
-
+    
 * Groovy Annotations for Speed (Use the Good) [0/8]
 
   - [ ] @CompileStatic

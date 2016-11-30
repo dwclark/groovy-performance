@@ -1,6 +1,7 @@
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import groovy.transform.CompileStatic;
 
+@CompileStatic
 class FastUtil extends RunnableState {
     @Override public boolean getDoesIteration() { return true; }
     

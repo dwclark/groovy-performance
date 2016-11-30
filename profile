@@ -55,10 +55,14 @@ fastIntegral = new FastRectangular(Functions.fastOne).runner(1_000, 0.0d, 1.0d);
 timer.warmUp(fastIntegral);
 fastComplexIntegral = new FastRectangular(Functions.fastComplex).runner(1_000, 0.0d, 1.0d);
 timer.warmUp(fastComplexIntegral);
+slowGrades = new SlowGrades().runner();
+timer.warmUp(slowGrades);
+fastGrades = new FastGrades().runner();
+timer.warmUp(fastGrades);
 
 //just need a place holder for the variable I am using
 x = 0.0d;
-integrateX2 = new FastRectangular(compile("${x} * ${x}")).runner(1_000, 0.0d, 1.0d)
+integrateX2 = new FastRectangular(compile("Math.pow(${x}, 2)")).runner(1_000, 0.0d, 1.0d)
 integrateSin = new FastRectangular(compile("net.jafama.FastMath.sin(${x})")).runner(1_000, 0.0d, Math.PI);
 integrateX3 = new FastRectangular(fromScript(new File('cubed.groovy'))).runner(1_000, 0.0d, 1.0d)
 

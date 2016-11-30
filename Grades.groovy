@@ -43,14 +43,15 @@ abstract class BaseGrades implements Grades {
         return (int) Math.floor(points);
     }
 
-    public RunnableState runner(final int gradesToCheck = 500) {
+    public RunnableState runner() {
         Grades THIS = this;
         return new RunnableState() {
             String _state;
+            @Override public boolean getDoesIteration() { return true; }
             public Object getState() { _state; }
             public void run() {
                 def random = ThreadLocalRandom.current();
-                def iter = random.doubles(gradesToCheck as long, Grades.LOWEST, Grades.HIGHEST).iterator();
+                def iter = random.doubles(ops as long, Grades.LOWEST, Grades.HIGHEST).iterator();
                 
                 while(iter.hasNext()) {
                     double val = iter.nextDouble();
@@ -64,11 +65,9 @@ abstract class BaseGrades implements Grades {
 @CompileStatic
 class SlowGrades extends BaseGrades {
 
-    Map<IntRange,String> mapping;
-
     String grade(final double points) {
         Integer actual = actualPoints(points);
-        return mapping.find { entry -> entry.key.contains(actual) }.value;
+        return ALL.find { entry -> entry.key.contains(actual) }.value;
     }
 }
 
@@ -77,30 +76,12 @@ class FastGrades extends BaseGrades {
 
     final List<String> theGrades;
     
-    static class Builder {
-
-        Map<IntRange,String> mapping;
-
-        Builder mapping(final Map<IntRange,String> map) {
-            this.mapping = map;
-            return this;
-        }
-
-        public Grades build() {
-            int low = BaseGrades.actualPoints(Grades.LOWEST);
-            int high = BaseGrades.actualPoints(Grades.HIGHEST);
-            List<String> strs = new ArrayList<>(high - low);
-            (low..high).each { int num -> strs.add(mapping.find { entry -> entry.key.contains(num) }.value); };
-            return new FastGrades(strs);
-        }
-    }
-
-    public FastGrades(final List<String> theGrades) {
-        this.theGrades = theGrades;
-    }
-
-    static Builder builder() {
-        return new Builder();
+    public FastGrades() {
+        int low = BaseGrades.actualPoints(Grades.LOWEST);
+        int high = BaseGrades.actualPoints(Grades.HIGHEST);
+        List<String> strs = new ArrayList<>(high - low);
+        (low..high).each { int num -> strs.add(ALL.find { entry -> entry.key.contains(num) }.value); };
+        this.theGrades = strs.asImmutable() as List<String>;
     }
 
     String grade(final double points) {

@@ -195,9 +195,9 @@ public class Groovy {
                 mutable.one = i;
                 mutable.two = i + 1;
                 //fast version
-                result = mutable.equals(pairs[i % mod]);
+                //result = mutable.equals(pairs[i % mod]);
                 //slow version:
-                //result = mutable == pairs[i % mod];
+                result = mutable == pairs[i % mod];
             }
 
             state = result;

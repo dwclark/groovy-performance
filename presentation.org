@@ -82,7 +82,7 @@
 
   - Usually it means using threads to parallelize operations and then minimizing thread context switches
 
-  - Alternately, it means using asynchronous I/O will callbacks or promises to parallelize operations
+  - Alternately, it means using asynchronous I/O with callbacks or promises to parallelize operations
 
 * Groovy Gotchas (Avoid the Bad) [0/9]
 
@@ -90,7 +90,7 @@
 
   - Java 8 is a big win for groovy. Java 8 is very agressive about inlining code.
 
-  - I used to recommend against using arrays directly in Groovy. Once hotspot has optimized a method there is no difference between Groovy and Java array access. This is acutally quite shocking.
+  - I used to recommend against using arrays directly in Groovy. However, hotspot will generally inline and optimize array access (with static compilation) to be basically as fast as Java. This is acutally quite shocking.
 
   - I used to also have concerns about reference equality in Groovy. I don't remember why, but it also is compiled to the same byte codes as on the JVM.
 
@@ -340,7 +340,7 @@
 
     - This layer should be mostly hidden from users of your library
 
-    - If you need to expose pieces of this part to users, only expose interfaces or abstract classes, you need the ability to change the internals without people depending on details. It's also best if what you expose it immutable.
+    - If you need to expose pieces of this part to users, only expose interfaces or abstract classes, you need the ability to change the internals without people depending on details. It's also best if what you expose is immutable.
 
     - Unit test this layer like crazy, if something goes wrong here, it will be a huge problem
 
@@ -356,7 +356,7 @@
 
   - Top Layer is for scripting, DSL's, configuration, and more idiomatic Groovy
 
-    - This is the public API for your application, this is what people should think of when they think about your application
+    - This is the surface area for your application, this is what people should think of when they think about your application
 
     - Use any dynamic tricks your want here, this code gets executed very few times
 

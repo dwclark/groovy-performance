@@ -23,9 +23,9 @@ This is a simple reloadable framework for timing JVM based code. Microbenchmarin
 
 Given those results, is B faster than A? Probably not. Even if it is "faster" you probably shouldn't bother swapping B for A. However, C is clearly faster than B or A and should probably replace them in a performance sensitive application.
 
-There are lots of caveats to doing this kind of testing and lots of pitfalls. First, the JVM will hotspot compile your code after it has executed a certain number of times. The default for modern JVM's is 10,000 executions. You can force the JVM hotspot compilation to kick in by warming up your code propertly *before* you execute it. To do this the timer provides a `warmUp` method.
+There are lots of caveats to doing this kind of testing and lots of pitfalls. First, the JVM will hotspot compile your code after it has executed a certain number of times. The default for modern JVM's is 10,000 executions. You can force the JVM hotspot compilation to kick in by warming up your code properly *before* you execute it. To do this the timer provides a `warmUp` method.
 
-The other problem that commonly happens is that the JVM is sometimes smart enough to optimize your function out of existence. If you have a pure function with no side effects and you do not consume the return value the JVM will sometimes convert your function into a no-op. If you start seeing too-good-to-be-true results when timing your code, this may have happened. To guard against this, the `RunnableState` interface provides a `setState` method which the timer will consume. Once your computations are done, set that value and the timer will consume it, forcing the JVM to always run your code.
+The other problem that commonly happens is that the JVM is sometimes smart enough to optimize your function out of existence. If you have a pure function with no side effects and you do not consume the return value, the JVM will sometimes convert your function into a no-op. If you start seeing too-good-to-be-true results when timing your code, this may have happened. To guard against this, the `RunnableState` interface provides a `setState` method which the timer will consume. Once your computations are done, set that value and the timer will consume it, forcing the JVM to always run your code.
 
 ## Diagnosing Performance Issues
 
@@ -35,19 +35,19 @@ First, we need to compile the script because most JVM/Groovy performance diagnos
 
 ### Using YourKit
 
-Performance issues will run in a continuous loop to facilitate attaching a profiler. I launch the process using the following command: `java -cp <path_to_groovy_installation>/lib/groovy-2.4.7.jar:. perf.PerformanceIssues`. Do the following to profile the application:
+`PerformanceIssues` will run in a continuous loop to facilitate attaching a profiler. I launch the process using the following command: `java -cp <path_to_groovy_installation>/lib/groovy-2.4.7.jar:. perf.PerformanceIssues`. Do the following to profile the application:
 
 1. Launch YourKit
-2. In the upper left corner YourKit will list the Java processes running on your machine. Click on it to attach.
-3. Click on the tool bar icon that says *Start CPU Profiling.
+2. In the upper left corner YourKit will list the Java processes running on your machine. Click on the process you just started to attach. You may have to kill your IDE and the gradle daemon to see clearly which process is yours.
+3. Click on the tool bar icon that says *Start CPU Profiling*.
 4. Wait for YourKit to gather data. Note, the time listed by YourKit is not clock time, but the total amount of CPU time consumed. So if you have 8 cores and you are using all of them you will accumulate approximately 8 seconds of data for every second of wall time.
 5. Click the *capture snapshot* button.
-6. Click *open*
+6. Click *Open*
 7. Use the *Call Tree* and *Hot Spots* to locate suspicious looking code
 8. Modify your code, recompile, and re-run.
-9. Did you do any better, go back to step #2 and find out.
+9. Did you do any better? go back to step #2 and find out.
 
-"Suspcious looking code" is very vague, but basically any line of code that you didn't expect to see or can't justify is grounds for suspicion. It may turn out that the code is needed, but you need to work by process of elimination to see if you can make the code faster. Examples of suspicious looking code would be code numeric code that spends lots of time doing string manipulation. A common source of groovy performance issues are the groovy "magic" methods that are injected into your code to make it, well, Groovy.
+"Suspcious looking code" is very vague, but basically any line of code that you didn't expect to see or can't justify is grounds for suspicion. It may turn out that the code is needed, but you need to work by process of elimination to see if you can make the code faster. Examples of suspicious looking code would be numeric code that spends lots of time doing string manipulation. A common source of groovy performance issues are the groovy "magic" methods that are injected into your code to make it, well, Groovy.
 
 ### Using JD-GUI
 
@@ -70,6 +70,6 @@ The JVM is an awesome piece of engineering. The Hotspot compiler does a lot of w
 7. Now highlight the method you want to investigate, it will be one of the methods in the `PerformanceIssues.groovy` file.
 8. Click *TriView*
 9. The Tri View shows your source code on the left, the bytecode in the middle, and assembly info on the left. The bytecode is what the JVM is actuall seeing.
-10. Finally, click on *Chain*. This is short for call chain and will show you the call graph for the method you are investigating.
+10. Finally, click on *Chain*. This is short for "call chain" and will show you the call graph for the method you are investigating.
 
 The call graph gives you information about code compilation and code inlining. In generally code that is both inlined and compiled will execute the fastest, while code that is neither will be the slowest. Code will generally not be inlined unless it is sufficiently short. Decisions about code compilation are more complicated, but in general well organized short methods will be more likely to be compiled and executed quickly.
